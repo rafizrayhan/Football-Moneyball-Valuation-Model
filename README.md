@@ -47,7 +47,7 @@ Structural:
 Attacking output:
 - Goals per 90
 - Non-penalty xG per 90
-- Goals minus xG per 90 (finishing efficiency)
+- Goals minus xG per 90 (finishing efficiency above/below expectation)
 - Assists per 90
 
 Chance creation:
@@ -67,8 +67,8 @@ Physical:
 ### Variable Selection
 All additional variables were tested against the base model using 
 adjusted R² — only variables that genuinely improved adjusted R² 
-were retained. Att Pen per 90 was tested and rejected (reduced 
-adjusted R²).
+were retained. Att Pen per 90 was tested and rejected as it 
+reduced adjusted R².
 
 ### Model Performance
 - R² = 0.687 — performance stats explain 69% of market value 
@@ -79,9 +79,9 @@ adjusted R²).
 ### Merging Strategy
 Players were matched between FBRef and Transfermarkt on name + 
 club (primary), with a unique-name-only fallback for unmatched 
-players. This prevents duplicate name collisions (e.g. two 
-players named Vitinha at different clubs being matched to the 
-wrong Transfermarkt record).
+players. This prevents duplicate name collisions — for example, 
+two players named Vitinha at different clubs being matched to 
+the wrong Transfermarkt record.
 
 ## Key Findings
 
@@ -98,8 +98,9 @@ exceeds what 2024/25 stats justify:
 | Lautaro Martínez | Inter | €85m | €25m |
 | Erling Haaland | Man City | €200m | €58m |
 
-The Premier League cluster (Semenyo, Kudus, Bowen, Mateta, 
-Strand Larsen) is a consistent pattern — see Limitations below.
+Note: the Premier League cluster (Semenyo, Kudus, Bowen, Mateta) 
+likely reflects the Premier League broadcast premium rather than 
+genuine overvaluation — see Limitations.
 
 ### Most Undervalued Forwards
 Players below the diagonal line — actual value significantly 
@@ -118,7 +119,8 @@ The model's most dramatic finding — Ramos predicted at €127m
 when Transfermarkt valued him at €35m — was partially validated 
 when AC Milan signed him in summer 2026 for a reported €74m fee. 
 The model correctly identified the direction and scale of the 
-undervaluation; the market subsequently corrected.
+undervaluation; the market subsequently corrected. The model was 
+not right — but it pointed in the right direction.
 
 ## Limitations
 
@@ -130,52 +132,69 @@ capture. This is a known limitation of regression-based
 valuation models.
 
 **2. Premier League broadcast premium**
-The overvalued Premier League cluster (Semenyo, Kudus, Bowen, 
-Mateta, Strand Larsen) likely reflects the Premier League's 
-global broadcast revenues inflating all player values beyond 
-what pure statistical output justifies. The model uses PPM as 
-a team quality proxy but does not fully capture the league-level 
-commercial premium. These players may not be genuinely overvalued 
-— they may be correctly priced for the Premier League market 
-specifically.
+The overvalued Premier League cluster likely reflects the 
+Premier League's global broadcast revenues inflating all player 
+values beyond what pure statistical output justifies. The model 
+uses PPM as a team quality proxy but does not fully capture 
+league-level commercial value. These players may not be 
+genuinely overvalued — they may be correctly priced for the 
+Premier League market specifically.
 
 **3. Reputation lag**
 Lautaro Martínez at €85m vs €25m predicted reflects a player 
-whose market value still reflects peak-season reputation (2023 
-treble, Copa América) while his 2024/25 statistical output was 
-below par. The model prices current performance; the market 
-prices career trajectory.
+whose market value still reflects peak-season reputation while 
+his 2024/25 statistical output was below par. The model prices 
+current performance; the market prices career trajectory.
 
 **4. Rotation player penalty**
-Players at elite clubs who rotate (e.g. Gonçalo Ramos at PSG) 
-accumulate fewer minutes and less visibility, suppressing their 
-Transfermarkt value even when their per-90 output is elite. 
-The model rewards statistical efficiency; the market penalises 
-squad role.
+Players at elite clubs who rotate accumulate fewer minutes and 
+less visibility, suppressing their Transfermarkt value even when 
+their per-90 output is elite. The model rewards statistical 
+efficiency; the market penalises squad role.
 
-**5. OLS ceiling**
-OLS regression has a natural ceiling for this type of prediction. 
-A proper player valuation model would use ML techniques — 
-gradient boosting, random forests, or neural networks — with 
-feature engineering, cross-validation, and regularisation. 
-This project is a Version 1 applying Moneyball methodology 
-directly to football. A more sophisticated ML version is planned 
-once the relevant techniques are covered in the University of 
-Michigan Sports Performance Analytics Specialisation.
+**5. Opposition quality**
+The model does not adjust for opposition strength. A forward 
+scoring prolifically for a relegated club faces systematically 
+weaker defences than one scoring at a Champions League club. 
+The undervalued list is dominated by small-club and relegated-
+club players partly for this reason.
 
-**6. Forwards only**
+**6. OLS ceiling**
+OLS regression has a natural ceiling for this type of 
+prediction. A proper player valuation model would use ML 
+techniques — gradient boosting, random forests, or neural 
+networks — with feature engineering, cross-validation, and 
+regularisation. This project is a Version 1 applying the 
+Moneyball methodology directly to football. A more 
+sophisticated ML version is planned once the relevant 
+techniques are covered in the University of Michigan Sports 
+Performance Analytics Specialisation.
+
+**7. Forwards only**
 This model covers pure forwards only. Defenders, midfielders, 
 and goalkeepers require entirely different predictor sets and 
-would need separate models. A future version will extend to all 
-positions.
+are not included. A future version will extend to all positions.
+
+## Data
+The merged dataset is not included in this repository due to 
+file size. To reproduce it, download the following files from 
+Kaggle and run the notebook:
+
+- **FBRef 2024/25 player stats:**
+  https://www.kaggle.com/datasets/hubertsidorowicz/football-players-stats-2024-2025
+  Download: `players_data-2024_2025.csv`
+
+- **Transfermarkt player valuations:**
+  https://www.kaggle.com/datasets/davidcariboo/player-scores
+  Download: `players.csv` and `player_valuations.csv`
+
+Place all three files in the same directory as the notebook and 
+run cells sequentially. The full pipeline from raw data to 
+final chart runs in under 2 minutes.
 
 ## Tools Used
 Python · Pandas · NumPy · Statsmodels · Matplotlib · 
 Jupyter Notebook
-
-## Data Sources
-- FBRef 2024/25: https://www.kaggle.com/datasets/hubertsidorowicz/football-players-stats-2024-2025
-- Transfermarkt: https://www.kaggle.com/datasets/davidcariboo/player-scores
 
 ## Author
 Rafiz Rayhan
